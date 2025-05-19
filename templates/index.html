@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>ChatbotRAG with AIDA</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Marketing ChatbotRAG</h1>
+        <div id="chat-box"></div>
+        <input type="text" id="user-input" placeholder="Type your message..."/>
+        <button id="send-btn">Send</button>
+    </div>
+    <script>
+        const sendBtn = document.getElementById('send-btn');
+        const userInput = document.getElementById('user-input');
+        const chatBox = document.getElementById('chat-box');
+
+        sendBtn.addEventListener('click', async () => {
+            const msg = userInput.value.trim();
+            if (!msg) return;
+            // display user
+            chatBox.innerHTML += `<div class='user-msg'>You: ${msg}</div>`;
+            userInput.value = '';
+            // call API
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({message: msg})
+            });
+            const data = await res.json();
+            // display bot
+            chatBox.innerHTML += `<div class='bot-msg'>Bot: ${data.response}</div>`;
+            chatBox.innerHTML += `<div class='stage'>AIDA Stage: ${data.aida_stage}</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    </script>
+</body>
+</html>
